@@ -42,7 +42,10 @@ next-env.d.ts
 
 # base de datos local del prototipo (se regenera con npm run seed)
 /data/baco.db*
+!/data/baco.db
 .gstack/
 
 # registros locales de herramientas
 /.gstack
+
+.vercel
