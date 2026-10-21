@@ -14,6 +14,12 @@ npm run dev       # http://localhost:3000
 
 Entra en `/entrar` con una de las tres cuentas de demo (hostelera, productor o consumidora). No hay contraseñas.
 
+**Ayuda y contacto.** El botón "¿Necesitas ayuda?" (abajo a la derecha) abre guías paso a paso que señalan la
+pantalla real (`lib/help/guides.ts`, `components/help/help-center.tsx`) y los canales de contacto. Los datos de contacto
+reales van en `.env.local` (`NEXT_PUBLIC_BACO_PHONE`, `NEXT_PUBLIC_BACO_WHATSAPP`, `NEXT_PUBLIC_BACO_EMAIL`,
+`NEXT_PUBLIC_BACO_HOURS`); sin ellos se muestran valores de ejemplo marcados como tales. Las peticiones "Que me llamen"
+se guardan en la tabla `help_requests`.
+
 **Gemini (opcional).** Copia `.env.example` a `.env.local` y pon `GEMINI_API_KEY`. Con clave, el asistente
 interpreta la petición con Gemini y, si ejecutas `npm run embed`, la búsqueda usa embeddings. Sin clave todo
 funciona igual con reglas en español y un índice léxico con sinónimos de cocina.
@@ -35,6 +41,8 @@ funciona igual con reglas en español y un índice léxico con sinónimos de coc
 | `app/` | Páginas (Next.js App Router): portada, `/buscar`, `/producto/[id]`, `/productor/[id]`, `/panel`, `/entrar` y las server actions |
 | `lib/db/` | SQLite (better-sqlite3): esquema y repositorio. Es la única capa que toca la base de datos |
 | `lib/match/` | El match: `intent.ts` (petición → intención), `search.ts` (filtros, score y explicación), `text.ts` (índice léxico), `gemini.ts` |
+| `lib/help/`, `components/help/`, `app/ayuda/` | Guías paso a paso, panel de ayuda, contacto y preguntas frecuentes |
+| `lib/contact.ts` | Canales de contacto (configurables por variables de entorno) |
 | `lib/photos.ts` | Foto ilustrativa de cada producto (reglas nombre/categoría → `lib/photo-library.ts`) y fotos editoriales |
 | `components/shot.tsx` | Foto con `next/image`, color de fondo mientras carga y velo para escribir encima |
 | `scripts/` | `scrape-catalog.mjs`, `seed.ts`, `embed.ts` |

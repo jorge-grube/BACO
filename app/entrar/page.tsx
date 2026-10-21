@@ -37,7 +37,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
           const producer = p.role === "productor" ? producerOwnedBy(p.id) : undefined;
           const highlighted = rol === p.role;
           return (
-            <form key={p.id} action={signIn}>
+            <form key={p.id} action={signIn} data-help={`role-${p.role}`}>
               <input type="hidden" name="profileId" value={p.id} />
               {next && <input type="hidden" name="next" value={next} />}
               <button

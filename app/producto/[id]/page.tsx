@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ViewTransition } from "react";
 import { notFound } from "next/navigation";
 import { RiArrowLeftSLine, RiExternalLinkLine, RiHeart3Fill, RiHeart3Line, RiMapPin2Line, RiShieldCheckLine } from "@remixicon/react";
 import { toggleFavorite } from "@/app/actions";
@@ -41,12 +42,17 @@ export default async function ProductPage({ params }: Props) {
 
   return (
     <div className="mx-auto max-w-[1440px] px-5 md:px-8 xl:px-12 pt-6">
-      <Link href={`/buscar?cat=${encodeURIComponent(product.category)}`} className="inline-flex items-center gap-0.5 text-[13px] font-medium text-ink-3 hover:text-ink">
-        <RiArrowLeftSLine className="size-4" /> {product.category}
+      <Link
+        href={`/buscar?cat=${encodeURIComponent(product.category)}`}
+        className="-ml-2 inline-flex min-h-11 items-center gap-1 rounded-full px-2 text-[15px] font-medium text-ink-2 hover:bg-paper-2 hover:text-ink"
+      >
+        <RiArrowLeftSLine className="size-5" aria-hidden /> Volver a {product.category.toLowerCase()}
       </Link>
 
-      <div className="mt-4 grid gap-10 lg:grid-cols-[1fr_360px]">
-        <div>
+      {/* En el móvil, el recuadro para escribir al productor va antes que las reseñas (antes quedaba dos pantallas más abajo). */}
+      <div className="mt-3 grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="lg:col-start-1">
+          <ViewTransition name={`product-photo-${product.id}`} share="morph" default="none">
           <Shot
             photo={productPhoto(product)}
             alt={`Foto ilustrativa de ${product.category.toLowerCase()}`}
@@ -60,13 +66,14 @@ export default async function ProductPage({ params }: Props) {
             </span>
             <div className="absolute inset-x-5 bottom-4 flex items-end justify-between gap-4 text-white md:inset-x-6 md:bottom-5">
               <div>
-                <p className="label !text-white/70">{product.category}</p>
+                <p className="label !text-white">{product.category}</p>
                 <p className="mt-1 text-xs font-medium text-white/80">
                   {product.brand ? `${product.brand} · ` : ""}M Producto Certificado
                 </p>
               </div>
             </div>
           </Shot>
+          </ViewTransition>
 
           <div className="mt-6 flex flex-wrap items-center gap-2">
             {product.labels.map((l) => (
@@ -74,7 +81,7 @@ export default async function ProductPage({ params }: Props) {
             ))}
             {product.boost ? <SponsoredTag /> : null}
           </div>
-          <h1 className="mt-3 text-[30px] leading-[1.1] font-semibold tracking-[-0.035em] md:text-[38px]">{product.name}</h1>
+          <h1 data-help="product-title" className="mt-3 text-[30px] leading-[1.1] font-semibold tracking-[-0.035em] md:text-[38px]">{product.name}</h1>
           <p className="mt-2 flex flex-wrap items-center gap-x-2 text-[15px] text-ink-2">
             <Link href={`/productor/${producer.id}`} className="font-semibold text-ink hover:underline hover:underline-offset-2">
               {producer.name}
@@ -118,53 +125,24 @@ export default async function ProductPage({ params }: Props) {
             )}
           </div>
 
-          {/* Reseñas */}
-          <section className="mt-14">
-            <SectionHeader label={`${reviews.length} ${reviews.length === 1 ? "reseña" : "reseñas"}`} title="Qué dicen quienes ya lo usan" />
-            {profile && profile.role !== "productor" && (
-              <div className="mb-5">
-                <ReviewForm productId={product.id} />
-              </div>
-            )}
-            {reviews.length === 0 ? (
-              <p className="text-sm text-ink-3">Todavía no hay reseñas.</p>
-            ) : (
-              <ul className="divide-y divide-line border-y border-line">
-                {reviews.map((r) => (
-                  <li key={r.id} className="flex gap-3 py-4">
-                    <Avatar name={r.business_name ?? r.name} />
-                    <div className="min-w-0 flex-1">
-                      <p className="flex flex-wrap items-center gap-2 text-[13px]">
-                        <span className="font-semibold">{r.business_name ?? r.name}</span>
-                        <span className="text-ink-3">{ROLE_NAMES[r.role]}</span>
-                        <span className="font-semibold tabular-nums">{r.rating}/5</span>
-                        {r.is_mock ? <MockTag>reseña de ejemplo</MockTag> : null}
-                      </p>
-                      {r.text && <p className="mt-1 text-sm leading-relaxed text-ink-2">{r.text}</p>}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
         </div>
 
         {/* Columna de acción */}
-        <aside className="lg:sticky lg:top-24 lg:self-start">
-          <div id="solicitar" className="scroll-mt-24 rounded-md border border-line bg-white p-5 shadow-card">
+        <aside className="lg:sticky lg:top-24 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-start">
+          <div id="solicitar" data-help="request" className="scroll-mt-24 rounded-md border border-line bg-white p-5 shadow-card">
             <div className="mb-4 flex items-start justify-between gap-3">
               <div>
                 <p className="label">Contactar con el productor</p>
                 <p className="mt-1 text-[13px] text-ink-2">Tu solicitud llega a su panel de BACO.</p>
               </div>
               {profile && (
-                <form action={toggleFavorite.bind(null, product.id)}>
+                <form action={toggleFavorite.bind(null, product.id)} data-help="favorite">
                   <button
-                    className="grid size-9 place-items-center rounded-full border border-line hover:bg-paper-2"
-                    title={fav ? "Quitar de favoritos" : "Guardar en favoritos"}
+                    className="inline-flex h-11 items-center gap-1.5 rounded-full border border-line px-3.5 text-sm font-semibold transition-transform hover:bg-paper-2 active:scale-95"
                     aria-pressed={fav}
                   >
-                    {fav ? <RiHeart3Fill className="size-[18px] text-clay" /> : <RiHeart3Line className="size-[18px] text-ink-2" />}
+                    {fav ? <RiHeart3Fill className="size-5 text-clay" aria-hidden /> : <RiHeart3Line className="size-5 text-ink-2" aria-hidden />}
+                    {fav ? "Guardado" : "Guardar"}
                   </button>
                 </form>
               )}
@@ -195,7 +173,7 @@ export default async function ProductPage({ params }: Props) {
               </p>
             ) : (
               <p className="mt-3 text-[13px] leading-snug text-ink-3">
-                Ficha sin reclamar: las solicitudes llegan al productor a través de Aplus.
+                Este productor aún no gestiona su página en BACO: tu mensaje le llega a través de Aplus.
               </p>
             )}
             {producer.capacity_note && <p className="dash mt-3 pt-3 text-[13px] leading-snug text-ink-2">{producer.capacity_note}</p>}
@@ -204,6 +182,39 @@ export default async function ProductPage({ params }: Props) {
             </p>
           </div>
         </aside>
+
+        {/* Reseñas */}
+        <div className="lg:col-start-1 lg:row-start-2">
+          <section data-help="reviews">
+            <SectionHeader label={`${reviews.length} ${reviews.length === 1 ? "reseña" : "reseñas"}`} title="Qué dicen quienes ya lo usan" />
+            {profile && profile.role !== "productor" && (
+              <div className="mb-5">
+                <ReviewForm productId={product.id} />
+              </div>
+            )}
+            {reviews.length === 0 ? (
+              <p className="text-sm text-ink-3">Todavía no hay reseñas.</p>
+            ) : (
+              <ul className="divide-y divide-line border-y border-line">
+                {reviews.map((r) => (
+                  <li key={r.id} className="flex gap-3 py-4">
+                    <Avatar name={r.business_name ?? r.name} />
+                    <div className="min-w-0 flex-1">
+                      <p className="flex flex-wrap items-center gap-2 text-[13px]">
+                        <span className="font-semibold">{r.business_name ?? r.name}</span>
+                        <span className="text-ink-3">{ROLE_NAMES[r.role]}</span>
+                        <span className="font-semibold tabular-nums">{r.rating}/5</span>
+                        {r.is_mock ? <MockTag>reseña de ejemplo</MockTag> : null}
+                      </p>
+                      {r.text && <p className="mt-1 text-sm leading-relaxed text-ink-2">{r.text}</p>}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        </div>
+
       </div>
 
       {similar.length > 0 && (
@@ -211,7 +222,7 @@ export default async function ProductPage({ params }: Props) {
           <SectionHeader label="Misma categoría, otros productores" title={`Más ${product.category.toLowerCase()} de Madrid`} />
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {similar.map((p) => (
-              <ProductCard key={p.id} product={p} />
+              <ProductCard key={p.id} product={p} morph />
             ))}
           </div>
         </section>

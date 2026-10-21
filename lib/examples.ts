@@ -2,7 +2,7 @@
 export const EXAMPLES = [
   "Queso curado de oveja para tapas, unos 20 kg al mes, cerca de Alcalá",
   "Vino tinto DOP para servir por copas",
-  "AOVE ecológico para cocina, 30 litros al mes",
+  "Aceite de oliva virgen extra ecológico para cocina, 30 litros al mes",
   "Miel de la sierra para postres",
   "Carne de la Sierra de Guadarrama para parrilla",
 ];

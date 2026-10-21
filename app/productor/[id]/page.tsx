@@ -44,7 +44,7 @@ export default async function ProducerPage({ params }: Props) {
                 <RiShieldCheckLine className="size-4" /> Ficha gestionada por el productor
               </span>
             ) : (
-              <span className="text-ink-3">Ficha creada a partir del catálogo oficial</span>
+              <span className="text-ink-3">Página creada con los datos del catálogo oficial</span>
             )}
             {producer.phone && (
               <span className="inline-flex items-center gap-1">
@@ -67,7 +67,7 @@ export default async function ProducerPage({ params }: Props) {
           )}
           {!producer.owner_profile_id && (
             <ButtonLink href="/entrar?rol=productor" variant="secondary" size="sm" className="mt-6">
-              ¿Es tu empresa? Reclama la ficha
+              ¿Eres el productor? Gestiona esta página gratis
             </ButtonLink>
           )}
         </div>
@@ -90,9 +90,10 @@ export default async function ProducerPage({ params }: Props) {
         <p className="mb-4 text-sm text-ink-2">
           <span className="font-semibold text-ink">{products.length}</span> {products.length === 1 ? "producto" : "productos"} en BACO
         </p>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <h2 className="sr-only">Productos</h2>
+        <div className="stagger grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {products.map((p) => (
-            <ProductCard key={p.id} product={p} />
+            <ProductCard key={p.id} product={p} morph />
           ))}
         </div>
       </section>

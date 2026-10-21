@@ -108,6 +108,19 @@ CREATE TABLE IF NOT EXISTS events (
 );
 CREATE INDEX IF NOT EXISTS events_product_ts ON events(product_id, ts);
 
+-- Peticiones de ayuda ("que me llamen"). No requieren cuenta; las atiende Aplus.
+CREATE TABLE IF NOT EXISTS help_requests (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  phone TEXT NOT NULL,
+  slot TEXT NOT NULL CHECK (slot IN ('manana','tarde','cualquiera')),
+  topic TEXT,
+  page TEXT,
+  profile_id TEXT,
+  status TEXT NOT NULL DEFAULT 'pendiente' CHECK (status IN ('pendiente','llamada')),
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
 CREATE TABLE IF NOT EXISTS sponsorships (
   id INTEGER PRIMARY KEY,
   product_id INTEGER NOT NULL REFERENCES products(id),

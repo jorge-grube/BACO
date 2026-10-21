@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { RiLogoutBoxRLine } from "@remixicon/react";
+import { RiLogoutBoxRLine, RiSearchLine } from "@remixicon/react";
 import { signOut } from "@/app/actions";
 import { producerOwnedBy, requestsFor } from "@/lib/db/repo";
 import { ROLE_NAMES } from "@/lib/domain";
@@ -13,7 +13,7 @@ export async function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-white/95 backdrop-blur-sm">
-      <div className="mx-auto flex h-16 max-w-[1440px] items-center gap-8 px-5 md:px-8 xl:px-12">
+      <div className="mx-auto flex h-16 max-w-[1440px] items-center gap-3 px-4 md:gap-8 md:px-8 xl:px-12">
         <Link href="/" className="text-[26px] leading-none" aria-label="BACO, inicio">
           <Logo />
         </Link>
@@ -27,8 +27,15 @@ export async function SiteHeader() {
           <Link href="/#sellos" className="hover:text-ink">
             Sellos de calidad
           </Link>
+          <Link href="/ayuda" className="hover:text-ink">
+            Ayuda
+          </Link>
         </nav>
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-1.5 md:gap-2">
+          {/* En el móvil no cabe el menú: el buscador, siempre a mano y con texto */}
+          <Link href="/buscar" className="inline-flex h-11 items-center gap-1.5 rounded-full px-3 text-[15px] font-semibold text-ink hover:bg-paper-2 md:hidden">
+            <RiSearchLine className="size-5" aria-hidden /> Buscar
+          </Link>
           {profile ? (
             <>
               <Link
@@ -36,9 +43,10 @@ export async function SiteHeader() {
                 className="flex items-center gap-2.5 rounded-full border border-line py-1 pr-3.5 pl-1 text-sm hover:bg-paper-2"
               >
                 <Avatar name={profile.name} className="size-7" />
+                <span className="pr-1 text-[15px] font-semibold sm:hidden">Mi panel</span>
                 <span className="hidden flex-col leading-tight sm:flex">
                   <span className="text-[13px] font-semibold">{profile.name}</span>
-                  <span className="text-[11px] text-ink-3">{ROLE_NAMES[profile.role]}</span>
+                  <span className="text-xs text-ink-3">{ROLE_NAMES[profile.role]}</span>
                 </span>
                 {pending > 0 && (
                   <span className="ml-1 grid h-5 min-w-5 place-items-center rounded-full bg-ink px-1.5 text-[11px] font-semibold text-white tabular-nums">
@@ -47,16 +55,19 @@ export async function SiteHeader() {
                 )}
               </Link>
               <form action={signOut}>
-                <button className="grid size-9 place-items-center rounded-full text-ink-3 hover:bg-paper-2 hover:text-ink" title="Salir">
-                  <RiLogoutBoxRLine className="size-[18px]" />
+                <button className="grid size-11 place-items-center rounded-full text-ink-3 hover:bg-paper-2 hover:text-ink" title="Cerrar sesión" aria-label="Cerrar sesión">
+                  <RiLogoutBoxRLine className="size-5" aria-hidden />
                 </button>
               </form>
             </>
           ) : (
             <>
-              <ButtonLink href="/entrar?rol=productor" variant="ghost" size="sm" className="hidden sm:inline-flex">
-                Soy productor
-              </ButtonLink>
+              {/* El envoltorio oculta el botón en móvil (buttonClass trae inline-flex, que ganaba a "hidden") */}
+              <span className="hidden sm:contents">
+                <ButtonLink href="/entrar?rol=productor" variant="ghost" size="sm">
+                  Soy productor
+                </ButtonLink>
+              </span>
               <ButtonLink href="/entrar" variant="primary" size="sm">
                 Entrar
               </ButtonLink>

@@ -70,14 +70,14 @@ export default async function Home() {
           href={CATALOG_URL}
           target="_blank"
           rel="noreferrer"
-          aria-label="Catálogo M Producto Certificado de la Comunidad de Madrid"
+          aria-label="Comunidad de Madrid: catálogo M Producto Certificado (abre en otra pestaña)"
           className="absolute top-4 right-4 z-10 flex items-center gap-3 rounded-[8px] bg-white py-2 pr-3.5 pl-2.5 shadow-card transition-shadow hover:shadow-pop md:top-6 md:right-6"
         >
           <CMLogo className="h-6 md:h-7" />
         </a>
         <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[0.95fr_1.05fr]">
           <div className="flex flex-col justify-center px-6 pt-24 pb-12 md:px-12 md:py-16 xl:pl-16">
-            <p className="label !text-sage-700">Catálogo M Producto Certificado · {stats.products} productos</p>
+            <p className="label !text-ink">Catálogo M Producto Certificado · {stats.products} productos</p>
             <h1 className="mt-5 max-w-[15ch] text-[38px] leading-[1.03] font-semibold tracking-[-0.045em] text-ink md:text-[50px] xl:text-[54px]">
               El productor madrileño que tu cocina busca.
             </h1>
@@ -85,10 +85,10 @@ export default async function Home() {
               Escribe lo que necesitas como se lo dirías a tu proveedor. BACO lo entiende, filtra por sello, zona y
               volumen, y te explica por qué encaja cada productor.
             </p>
-            <div className="mt-8 max-w-xl">
+            <div className="mt-8 max-w-xl" data-help="search">
               <SearchBox defaultValue="" size="lg" />
             </div>
-            <p className="mt-5 max-w-xl text-[13px] leading-loose text-ink/60">
+            <p className="mt-5 max-w-xl text-sm leading-loose text-ink/80" data-help="examples">
               Prueba con{" "}
               {EXAMPLES.slice(1, 4).map((q, i) => (
                 <span key={q}>
@@ -207,8 +207,8 @@ export default async function Home() {
       <section id="tendencias" className="mt-16 scroll-mt-24 overflow-hidden rounded-lg bg-ink text-white">
         <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[1.6fr_1fr]">
           <div className="p-6 md:p-10">
-            <p className="label !text-white/45">Últimos 7 días</p>
-            <h2 className="mt-1.5 text-2xl font-semibold tracking-[-0.03em]">Lo que está buscando la hostelería</h2>
+            <p className="label !text-white/70">Últimos 7 días</p>
+            <h2 className="mt-1.5 text-2xl font-semibold tracking-[-0.03em]">Lo más buscado por la hostelería</h2>
             <div className="mt-6 divide-y divide-white/10 border-y border-white/10">
               {trending.map((p, i) => (
                 <ProductRow
@@ -226,21 +226,21 @@ export default async function Home() {
             </div>
           </div>
           <div className="border-t border-white/10 p-6 md:p-10 lg:border-t-0 lg:border-l">
-            <p className="label !text-white/45">Productores en tendencia</p>
+            <p className="label !text-white/70">Productores más visitados</p>
             <ul className="mt-3 divide-y divide-white/10">
               {producers.map((p) => (
                 <li key={p.id}>
                   <Link href={`/productor/${p.id}`} className="group flex items-center justify-between gap-3 py-2.5 text-sm">
                     <span className="min-w-0">
                       <span className="block truncate font-semibold group-hover:underline group-hover:underline-offset-2">{p.name}</span>
-                      <span className="text-xs text-white/45">{p.municipality}</span>
+                      <span className="text-[13px] text-white/65">{p.municipality}</span>
                     </span>
-                    <span className="shrink-0 text-xs text-white/45 tabular-nums">{p.events} visitas</span>
+                    <span className="shrink-0 text-[13px] text-white/65 tabular-nums">{p.events} visitas</span>
                   </Link>
                 </li>
               ))}
             </ul>
-            <p className="label mt-8 !text-white/45">Ofertas activas</p>
+            <p className="label mt-8 !text-white/70">Ofertas activas</p>
             <ul className="mt-3 divide-y divide-white/10">
               {offers.map((p) => (
                 <li key={p.id}>
@@ -257,7 +257,7 @@ export default async function Home() {
 
       {/* Sellos */}
       <section id="sellos" className="mt-20 scroll-mt-24">
-        <SectionHeader label="Calidad diferenciada" title="Busca por sello, no por suerte" />
+        <SectionHeader label="Sellos oficiales de origen" title="Busca por sello, no por suerte" />
         <div className="grid gap-px overflow-hidden rounded-md border border-line bg-line sm:grid-cols-2 lg:grid-cols-5">
           {LABEL_CODES.map((code) => (
             <Link key={code} href={`/buscar?sello=${code}`} className="group flex flex-col bg-white hover:bg-paper-2">
@@ -284,8 +284,11 @@ export default async function Home() {
           ))}
         </div>
         <p className="mt-3 text-xs text-ink-3">
-          Todos los productos llevan además la marca de garantía M Producto Certificado. Las DOP, IGP y DC son figuras de
-          calidad ligadas al origen, con su propio consejo regulador.
+          Todos los productos llevan además la marca de garantía M Producto Certificado. DOP, IGP y DC son sellos oficiales que
+          garantizan dónde y cómo se hace el producto.{" "}
+          <Link href="/ayuda" className="font-semibold text-ink underline underline-offset-2">
+            ¿Qué significa cada uno?
+          </Link>
         </p>
       </section>
 
@@ -293,8 +296,12 @@ export default async function Home() {
       <section className="mt-20">
         <SectionHeader title="Explora por categoría" action={<ButtonLink href="/buscar" variant="ghost" size="sm">Ver todo <RiArrowRightLine className="size-4" /></ButtonLink>} />
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-7">
-          {categories.map((c) => (
-            <Link key={c.category} href={`/buscar?cat=${encodeURIComponent(c.category)}`} className="group overflow-hidden rounded-md">
+          {categories.map((c, i) => (
+            <Link
+              key={c.category}
+              href={`/buscar?cat=${encodeURIComponent(c.category)}`}
+              className={`group overflow-hidden rounded-md transition-transform active:scale-[0.98] ${i >= 6 ? "max-sm:hidden" : ""}`}
+            >
               <Shot
                 photo={categoryPhoto(c.category)}
                 sizes="(min-width: 1024px) 14vw, (min-width: 640px) 33vw, 50vw"
@@ -310,6 +317,9 @@ export default async function Home() {
             </Link>
           ))}
         </div>
+        <ButtonLink href="/buscar" variant="secondary" className="mt-3 w-full sm:hidden">
+          Ver las {categories.length} categorías <RiArrowRightLine className="size-4" />
+        </ButtonLink>
       </section>
 
       {/* Para quién */}
@@ -320,7 +330,7 @@ export default async function Home() {
             label="Hostelería y comercios"
             photoId={EDITORIAL.cocina}
             title="Encuentra, compara y pide muestra en minutos"
-            points={["Búsqueda en lenguaje natural", "Filtra por sello, zona y volumen mensual", "Solicitudes con seguimiento"]}
+            points={["Escribe como hablas: «queso de oveja, 20 kilos al mes»", "Filtra por sello, zona y cantidad", "Sigue tus peticiones desde tu panel"]}
             href={profile?.role === "hostelero" ? "/panel" : "/entrar?rol=hostelero"}
             cta={profile?.role === "hostelero" ? "Ir a mi panel" : "Entrar como hostelero"}
             dark
@@ -329,9 +339,9 @@ export default async function Home() {
             label="Productores"
             photoId={EDITORIAL.queseria}
             title="Te encuentran los restaurantes que ya te buscan"
-            points={["Tu ficha ya está creada a partir del catálogo", "Bandeja de solicitudes", "Cuántas veces apareces y quién te mira"]}
+            points={["Tu página ya está creada con tus productos del catálogo", "Te damos de alta por teléfono si lo prefieres", "Ves cuántas veces sales en búsquedas"]}
             href={profile?.role === "productor" ? "/panel" : "/entrar?rol=productor"}
-            cta={profile?.role === "productor" ? "Ir a mi panel" : "Reclamar mi ficha"}
+            cta={profile?.role === "productor" ? "Ir a mi panel" : "Gestiona tu página gratis"}
           />
           <Audience
             label="Consumidores"
@@ -396,7 +406,7 @@ function OriginTile({
       >
         <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-5 text-white md:p-7">
           <div>
-            <p className="label !text-white/70">{label}</p>
+            <p className="label !text-white">{label}</p>
             <p className={big ? "mt-2 max-w-[22ch] text-2xl leading-tight font-semibold tracking-[-0.03em] md:text-[30px]" : "mt-1.5 max-w-[28ch] text-lg leading-snug font-semibold tracking-[-0.02em]"}>
               {title}
             </p>

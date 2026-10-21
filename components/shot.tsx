@@ -36,7 +36,7 @@ export function Shot({
         className={clsx("object-cover", imgClassName)}
       />
       {scrim === "bottom" && (
-        <span aria-hidden className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_top,rgb(20_24_22/0.72),rgb(20_24_22/0.18)_45%,transparent_70%)]" />
+        <span aria-hidden className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_top,rgb(20_24_22/0.84),rgb(20_24_22/0.45)_50%,transparent_82%)]" />
       )}
       {scrim === "full" && <span aria-hidden className="pointer-events-none absolute inset-0 bg-ink/45" />}
       {children}
@@ -49,7 +49,7 @@ export function IllustrativeTag({ className }: { className?: string }) {
   return (
     <span
       className={clsx(
-        "inline-flex items-center rounded-[4px] bg-white/90 px-1.5 py-0.5 text-[10.5px] font-medium text-ink-2",
+        "inline-flex items-center rounded-[4px] bg-white/90 px-2 py-0.5 text-xs font-medium text-ink-2",
         className,
       )}
     >

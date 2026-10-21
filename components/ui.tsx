@@ -26,11 +26,16 @@ const VARIANTS: Record<Variant, string> = {
   ghost: "text-ink-2 hover:text-ink hover:bg-paper-2",
   sage: "bg-sage text-ink hover:bg-sage-100",
 };
-const SIZES = { sm: "h-8 px-3 text-[13px] gap-1.5", md: "h-10 px-4 text-sm gap-2", lg: "h-12 px-5 text-[15px] gap-2" };
+// En el móvil los botones miden al menos 44 px de alto (dedos grandes, cocina, campo); en escritorio, más compactos.
+const SIZES = {
+  sm: "h-11 px-4 text-[15px] gap-1.5 md:h-8 md:px-3 md:text-[13px]",
+  md: "h-12 px-5 text-base gap-2 md:h-10 md:px-4 md:text-sm",
+  lg: "h-12 px-5 text-[15px] gap-2",
+};
 
 export function buttonClass(variant: Variant = "primary", size: keyof typeof SIZES = "md", extra?: string) {
   return clsx(
-    "inline-flex items-center justify-center rounded-[8px] font-semibold whitespace-nowrap transition-colors",
+    "inline-flex items-center justify-center rounded-[8px] font-semibold whitespace-nowrap transition-[color,background-color,border-color,transform] active:scale-[0.98]",
     "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sage-700 disabled:opacity-50",
     VARIANTS[variant],
     SIZES[size],
@@ -76,7 +81,7 @@ export function LabelBadge({ code, size = "md" }: { code: LabelCode; size?: "sm"
       title={l.name}
       className={clsx(
         "inline-flex items-center gap-1 rounded-[4px] border font-semibold whitespace-nowrap",
-        size === "sm" ? "h-5 px-1.5 text-[10.5px]" : "h-6 px-2 text-[11.5px]",
+        size === "sm" ? "h-6 px-1.5 text-xs" : "h-7 px-2 text-[13px]",
         l.kind === "eco" ? "border-sage text-sage-700" : "border-line-2 text-ink",
       )}
     >
@@ -88,7 +93,7 @@ export function LabelBadge({ code, size = "md" }: { code: LabelCode; size?: "sm"
 
 export function SponsoredTag() {
   return (
-    <span className="inline-flex h-5 items-center rounded-md bg-clay-50 px-1.5 text-[10.5px] font-semibold text-clay">
+    <span className="inline-flex h-6 items-center rounded-md bg-clay-50 px-1.5 text-xs font-semibold text-clay">
       Patrocinado
     </span>
   );
@@ -96,7 +101,7 @@ export function SponsoredTag() {
 
 export function MockTag({ children = "dato de ejemplo" }: { children?: ReactNode }) {
   return (
-    <span className="inline-flex items-center rounded border border-dashed border-line-2 px-1 text-[10px] font-medium text-ink-3">
+    <span className="inline-flex items-center rounded border border-dashed border-line-2 px-1 text-xs font-medium text-ink-3">
       {children}
     </span>
   );
@@ -178,9 +183,9 @@ export function Card({ className, ...props }: ComponentProps<"div">) {
 }
 
 export function Rating({ value, count }: { value: number | null; count: number }) {
-  if (!count || !value) return <span className="text-xs text-ink-3">Sin reseñas</span>;
+  if (!count || !value) return <span className="text-[13px] text-ink-3">Sin reseñas</span>;
   return (
-    <span className="inline-flex items-center gap-1 text-xs whitespace-nowrap text-ink-2 tabular-nums">
+    <span className="inline-flex items-center gap-1 text-[13px] whitespace-nowrap text-ink-2 tabular-nums">
       <svg viewBox="0 0 12 12" className="size-3 text-ink" aria-hidden>
         <path fill="currentColor" d="m6 .8 1.6 3.3 3.6.5-2.6 2.5.6 3.6L6 9l-3.2 1.7.6-3.6L.8 4.6l3.6-.5L6 .8Z" />
       </svg>

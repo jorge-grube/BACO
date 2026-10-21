@@ -31,7 +31,8 @@ export function CMLogo({ className, tone = "ink" }: { className?: string; tone?:
         <polygon key={i} points={star(x, y, 3.3)} fill="#fff" />
       ))}
       <text x="50" y="18" fontFamily="Arial, Helvetica, sans-serif" fontWeight="700" fontSize="18.5" fill={tone === "white" ? "#fff" : "#141816"}>
-        Comunidad
+        {/* espacio final: sin él, el texto accesible queda "Comunidadde Madrid" */}
+        {"Comunidad "}
       </text>
       <text x="50" y="38" fontFamily="Arial, Helvetica, sans-serif" fontWeight="700" fontSize="18.5" fill={tone === "white" ? "#fff" : "#141816"}>
         de Madrid

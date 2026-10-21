@@ -348,3 +348,11 @@ export function logSearchHits(profileId: string | null, productIds: number[]) {
 export function setEmbedding(productId: number, vector: number[]) {
   db().prepare(`UPDATE products SET embedding = ? WHERE id = ?`).run(JSON.stringify(vector), productId);
 }
+
+// --- ayuda ---------------------------------------------------------------------------
+
+export function createHelpRequest(r: { name: string; phone: string; slot: string; topic: string | null; page: string | null; profileId: string | null }) {
+  db()
+    .prepare(`INSERT INTO help_requests (name, phone, slot, topic, page, profile_id) VALUES (?, ?, ?, ?, ?, ?)`)
+    .run(r.name, r.phone, r.slot, r.topic, r.page, r.profileId);
+}

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { RiPauseLine, RiPlayLine } from "@remixicon/react";
 
 export type HubMatch = { product: string; producer: string; dest: number; score: number };
 
@@ -53,6 +54,15 @@ export function HubLive(props: HubProps) {
   const beamRef = useRef<SVGGElement>(null);
   const vanRefs = useRef<(SVGGElement | null)[]>([]);
   const readoutRef = useRef<HTMLSpanElement>(null);
+  // Pausa (WCAG 2.2.2): todo lo que se mueve solo más de 5 s debe poder pararse.
+  const [paused, setPaused] = useState(false);
+  const pausedRef = useRef(false);
+  const resumeRef = useRef<() => void>(() => {});
+  const togglePause = () => {
+    pausedRef.current = !pausedRef.current;
+    setPaused(pausedRef.current);
+    if (!pausedRef.current) resumeRef.current();
+  };
 
   const { basis, lanes, pointer } = props;
   const project = (x: number, y: number, z: number): [number, number] => [
@@ -224,10 +234,10 @@ export function HubLive(props: HubProps) {
       const dt = last ? Math.min((now - last) / 1000, 1 / 30) : 1 / 60;
       last = now;
       step(dt);
-      frame = visible ? requestAnimationFrame(tick) : 0;
+      frame = visible && !pausedRef.current ? requestAnimationFrame(tick) : 0;
     };
     const run = () => {
-      if (!frame && visible && !still.matches) {
+      if (!frame && visible && !still.matches && !pausedRef.current) {
         last = 0;
         frame = requestAnimationFrame(tick);
       }
@@ -255,6 +265,7 @@ export function HubLive(props: HubProps) {
       { rootMargin: "80px 0px" },
     );
     io.observe(root.current!);
+    resumeRef.current = run;
 
     // Elegir hostelero: la siguiente caja será para su furgoneta.
     const choose = (lane: number) => {
@@ -314,19 +325,33 @@ export function HubLive(props: HubProps) {
     </svg>
   );
 
-  const aria = "Muelle BACO: pulsa 1, 2 o 3 para elegir el hostelero que recibe la siguiente caja";
+  const aria = "Animación: BACO lleva productos de Madrid a tres restaurantes. Con el teclado, 1, 2 o 3 elige quién recibe la siguiente caja";
+
+  const pauseButton = (
+    <button
+      type="button"
+      onClick={togglePause}
+      className="absolute right-2 bottom-2 inline-flex h-11 items-center gap-1.5 rounded-full bg-white/90 px-4 text-sm font-semibold text-ink shadow-card hover:bg-white motion-reduce:hidden"
+    >
+      {paused ? <RiPlayLine className="size-4" aria-hidden /> : <RiPauseLine className="size-4" aria-hidden />}
+      {paused ? "Reanudar animación" : "Pausar animación"}
+    </button>
+  );
 
   if (props.bare) {
     // Integrada en la cabecera verde: sin tarjeta, la figura en blanco sobre el verde.
     return (
-      <div ref={root} className="iso hub hub--bare" data-theme="light" tabIndex={0} aria-label={aria}>
-        <div className="iso-stage">{svgEl}</div>
+      <div className="relative">
+        <div ref={root} className="iso hub hub--bare" data-theme="light" tabIndex={0} role="group" aria-label={aria}>
+          <div className="iso-stage">{svgEl}</div>
+        </div>
+        {pauseButton}
       </div>
     );
   }
 
   return (
-    <div ref={root} className="iso hub" data-theme="light" tabIndex={0} aria-label={aria}>
+    <div ref={root} className="iso hub" data-theme="light" tabIndex={0} role="group" aria-label={aria}>
       <figure className="iso-figure">
         <div className="iso-plate">
           <div className="iso-plate-corners" aria-hidden="true">

@@ -40,16 +40,16 @@ export const ROLE_NAMES: Record<Role, string> = {
 
 export const REQUEST_TYPES = {
   muestra: "Pedir muestra",
-  pedido: "Solicitar pedido",
-  contacto: "Contactar",
+  pedido: "Pedir precio y plazo",
+  contacto: "Hacer una pregunta",
 } as const;
 export type RequestType = keyof typeof REQUEST_TYPES;
 
 export const REQUEST_STATUS = {
   enviada: "Enviada",
-  vista: "Vista",
+  vista: "Leída",
   respondida: "Respondida",
-  cerrada: "Cerrada",
+  cerrada: "Archivada",
 } as const;
 export type RequestStatus = keyof typeof REQUEST_STATUS;
 

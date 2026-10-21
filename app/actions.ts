@@ -7,7 +7,8 @@ import { z } from "zod";
 import * as repo from "@/lib/db/repo";
 import { SESSION_COOKIE, currentProfile } from "@/lib/session";
 
-export type ActionState = { ok: boolean; message: string } | null;
+// `values` devuelve lo que escribió el usuario para no vaciarle el formulario si hay un error.
+export type ActionState = { ok: boolean; message: string; values?: Record<string, string> } | null;
 
 export async function signIn(formData: FormData) {
   const id = String(formData.get("profileId") ?? "");
@@ -46,7 +47,7 @@ export async function sendRequest(_prev: ActionState, formData: FormData): Promi
     message: parsed.data.message,
   });
   refresh();
-  return { ok: true, message: "Solicitud enviada. El productor la verá en su panel." };
+  return { ok: true, message: "Enviado. Cuando el productor conteste, lo verás en «Mi panel»." };
 }
 
 export async function toggleFavorite(productId: number) {
@@ -114,5 +115,35 @@ export async function updateProducer(_prev: ActionState, formData: FormData): Pr
     capacity_note: parsed.data.capacity_note || null,
   });
   refresh();
-  return { ok: true, message: "Ficha actualizada." };
+  return { ok: true, message: "Cambios guardados. Ya los ve la hostelería." };
+}
+
+// "Que me llamen": funciona sin cuenta. Guardamos solo lo necesario para devolver la llamada.
+const CallbackInput = z.object({
+  name: z.string().trim().min(2, "Dinos tu nombre.").max(80),
+  phone: z
+    .string()
+    .trim()
+    .transform((v) => v.replace(/[\s.-]/g, ""))
+    .pipe(z.string().regex(/^(\+34|0034)?[6789]\d{8}$/, "Revisa el teléfono: son 9 números, por ejemplo 612 345 678.")),
+  slot: z.enum(["manana", "tarde", "cualquiera"]),
+  topic: z.string().trim().max(300).optional(),
+  page: z.string().max(200).optional(),
+  consent: z.literal("on", { message: "Marca la casilla para que podamos llamarte." }),
+});
+
+export async function requestCallback(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const raw = Object.fromEntries(formData) as Record<string, string>;
+  const parsed = CallbackInput.safeParse(raw);
+  if (!parsed.success) return { ok: false, message: parsed.error.issues[0].message, values: raw };
+  const profile = await currentProfile();
+  repo.createHelpRequest({
+    name: parsed.data.name,
+    phone: parsed.data.phone,
+    slot: parsed.data.slot,
+    topic: parsed.data.topic || null,
+    page: parsed.data.page || null,
+    profileId: profile?.id ?? null,
+  });
+  return { ok: true, message: "Apuntado. Te llamaremos en la franja que has elegido." };
 }

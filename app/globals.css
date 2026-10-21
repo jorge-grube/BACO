@@ -6,7 +6,7 @@
 
   --color-ink: #141816;
   --color-ink-2: #535c57;
-  --color-ink-3: #89928d;
+  --color-ink-3: #646c68; /* 5,4:1 sobre blanco (antes #89928d, 3,2:1: suspendía AA) */
   --color-line: #e6e9e7;
   --color-line-2: #d5dad7;
   --color-paper: #ffffff;
@@ -15,7 +15,7 @@
   --color-sage-50: #edf4f0;
   --color-sage-100: #dceae2;
   --color-sage-700: #2e5b47;
-  --color-clay: #c2643f;
+  --color-clay: #a8502d; /* 4,7:1 sobre clay-50 */
   --color-clay-50: #f8ece6;
 
   --radius-sm: 6px;
@@ -60,15 +60,110 @@ body {
 }
 
 .label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--color-ink-3);
 }
 
+/* Foco visible en todo el sitio (antes desaparecía sobre fondo blanco en los botones) */
+:focus-visible {
+  outline: 2px solid var(--color-sage-700);
+  outline-offset: 2px;
+}
+
+/* Listas que entran escalonadas: solo las 6 primeras, breve y sin bloquear la lectura */
+.stagger > * {
+  animation: help-pop 280ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.stagger > *:nth-child(2) { animation-delay: 40ms; }
+.stagger > *:nth-child(3) { animation-delay: 80ms; }
+.stagger > *:nth-child(4) { animation-delay: 120ms; }
+.stagger > *:nth-child(5) { animation-delay: 160ms; }
+.stagger > *:nth-child(n + 6) { animation-delay: 200ms; }
+
+/* Esqueletos de carga */
+.skeleton {
+  background: linear-gradient(90deg, var(--color-paper-2) 0%, var(--color-line) 50%, var(--color-paper-2) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+@keyframes shimmer {
+  from { background-position: 100% 0; }
+  to { background-position: -100% 0; }
+}
+
+/* Check que se dibuja al confirmar un envío */
+.draw-check path {
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+  animation: draw 420ms 120ms ease-out forwards;
+}
+@keyframes draw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Transición entre páginas: la foto de la tarjeta pasa a ser la de la ficha */
+::view-transition-group(.morph) {
+  animation-duration: 340ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
 .dash {
   border-top: 1px dashed var(--color-line-2);
+}
+
+/* --- Ayuda ------------------------------------------------------------------------- */
+
+/* Aparición suave de tarjetas y avisos de ayuda */
+.help-pop {
+  animation: help-pop 260ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes help-pop {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+/* Foco de la guía: oscurece todo menos el elemento señalado */
+.tour-spot {
+  box-shadow:
+    0 0 0 3px var(--color-sage),
+    0 0 0 9999px rgb(20 24 22 / 0.28);
+  transition:
+    top 280ms ease,
+    left 280ms ease,
+    width 280ms ease,
+    height 280ms ease;
+}
+
+/* Panel de ayuda: hoja que sube desde abajo en el móvil */
+.help-sheet[open] {
+  animation: sheet-up 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.help-sheet[open]::backdrop {
+  animation: fade-in 220ms ease;
+}
+@keyframes sheet-up {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Escala de texto en el móvil: los metadatos de 12-13 px suben un punto (lectura al sol, usuarios de 45-65 años).
+   En escritorio se mantiene la densidad original. */
+@media (max-width: 767px) {
+  .text-xs { font-size: 13px; line-height: 1.4; }
+  .text-\[13px\] { font-size: 14px; }
+  .text-\[12\.5px\] { font-size: 14px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
