@@ -1,0 +1,94 @@
+/* Fig 1 · Muelle BACO: tokens propios de la figura, en tema claro */
+.hub {
+  --hub-cavity: #c9cdcb;
+  --hub-cavity-crate: #dde0de;
+  --anatomy-page: transparent;
+  --anatomy-card: #ffffff;
+  --anatomy-paper: #ffffff;
+  outline: none;
+}
+.hub .iso-figure {
+  margin: 0;
+}
+.hub .iso-plate {
+  border-radius: 16px;
+}
+.hub .hub-cavity {
+  fill: var(--hub-cavity);
+}
+.hub .hub-cavity-crate {
+  fill: var(--hub-cavity-crate);
+  stroke: var(--anatomy-lo);
+  stroke-width: var(--anatomy-weight);
+}
+.hub .hub-beam {
+  transition: opacity 0.35s ease;
+}
+.hub .hub-van {
+  cursor: pointer;
+}
+.hub .hub-van:hover .iso-edge {
+  stroke: var(--anatomy-hi);
+}
+.hub:focus-visible .iso-plate {
+  box-shadow: 0 0 0 2px #2e5b47;
+}
+.hub [data-corner="readout"] {
+  left: auto;
+  max-width: calc(100% - 32px);
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hub .iso-stage {
+  overflow: hidden;
+}
+@media (max-width: 640px) {
+  .hub .iso-svg {
+    width: 116%;
+    margin: -4% -8% -6%;
+  }
+}
+
+/* Variante integrada en la cabecera verde: objetos blancos, líneas en verde oscuro */
+.hub--bare {
+  --anatomy-paper: #f7faf8;
+  --anatomy-face: #ffffff;
+  --anatomy-top: #ffffff;
+  --anatomy-shade-0: #cfe0d6;
+  --anatomy-shade-1: #d9e8df;
+  --anatomy-shade-2: #e3efe8;
+  --anatomy-shade-3: #edf5f0;
+  --anatomy-lit-top: #ffffff;
+  --anatomy-lit-shade: #e6f0ea;
+  --anatomy-hi: #1d3f30;
+  --anatomy-mid: #4f7a65;
+  --anatomy-lo: #7fa391;
+  --anatomy-faint: #a6c3b4;
+  --anatomy-lit: #0d261b;
+  --anatomy-halo: #24493a;
+  --anatomy-halo-opacity: 0.22;
+  --anatomy-dot: #24493a;
+  --hub-cavity: #97b6a5;
+  --hub-cavity-crate: #c4d9cc;
+  background: transparent;
+}
+.hub--bare .iso-stage {
+  overflow: visible;
+}
+.hub--bare .hub-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 4px;
+  font: 500 11px/1.4 var(--anatomy-mono);
+  letter-spacing: 0.04em;
+  color: #2e5b47;
+}
+.hub--bare .hub-foot [data-readout] {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: right;
+}
