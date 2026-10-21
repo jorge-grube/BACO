@@ -4,7 +4,7 @@ import type { NextConfig } from "next";
 // por petición, así que no usamos Cache Components de momento.
 const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
-    "/*": ["./data/baco.db"],
+    "/*": ["./data/**/*"],
   },
   turbopack: {
     rules: {
