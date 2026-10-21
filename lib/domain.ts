@@ -30,12 +30,13 @@ export const LABELS = {
 export type LabelCode = keyof typeof LABELS;
 export const LABEL_CODES = Object.keys(LABELS) as LabelCode[];
 
-export type Role = "hostelero" | "productor" | "consumidor";
+export type Role = "hostelero" | "productor" | "consumidor" | "equipo";
 
 export const ROLE_NAMES: Record<Role, string> = {
   hostelero: "Hostelero",
   productor: "Productor",
   consumidor: "Consumidor",
+  equipo: "Equipo BACO",
 };
 
 export const REQUEST_TYPES = {

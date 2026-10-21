@@ -12,7 +12,11 @@ npm run seed      # crea data/baco.db a partir de data/catalog.raw.json
 npm run dev       # http://localhost:3000
 ```
 
-Entra en `/entrar` con una de las tres cuentas de demo (hostelera, productor o consumidora). No hay contraseñas.
+Entra en `/entrar` con tu móvil (código por SMS simulado: sale en pantalla) o pulsando una de las cuatro cuentas de demo:
+hostelera (600 000 001), productor (600 000 002), consumidora (600 000 003) y equipo BACO (600 000 009). No hay contraseñas.
+Si ya tenías una `data/baco.db` antigua, se migra sola al arrancar; `npm run seed` la regenera desde cero.
+
+**Qué hay implementado, parte por parte:** [`docs/IMPLEMENTACION.md`](docs/IMPLEMENTACION.md).
 
 **Ayuda y contacto.** El botón "¿Necesitas ayuda?" (abajo a la derecha) abre guías paso a paso que señalan la
 pantalla real (`lib/help/guides.ts`, `components/help/help-center.tsx`) y los canales de contacto. Los datos de contacto
@@ -38,8 +42,9 @@ funciona igual con reglas en español y un índice léxico con sinónimos de coc
 
 | Carpeta | Qué hay |
 | --- | --- |
-| `app/` | Páginas (Next.js App Router): portada, `/buscar`, `/producto/[id]`, `/productor/[id]`, `/panel`, `/entrar` y las server actions |
-| `lib/db/` | SQLite (better-sqlite3): esquema y repositorio. Es la única capa que toca la base de datos |
+| `app/` | Páginas (Next.js App Router) y server actions. Mapa completo de rutas en `docs/IMPLEMENTACION.md` |
+| `lib/db/` | SQLite (better-sqlite3): esquema, migración, datos de demo de las partes nuevas (`demo-extras.ts`) y repositorio. Es la única capa que toca la base de datos |
+| `lib/notify.ts` | Avisos por WhatsApp/SMS/correo. En la demo se guardan en la base y se ven en `/demo/avisos` |
 | `lib/match/` | El match: `intent.ts` (petición → intención), `search.ts` (filtros, score y explicación), `text.ts` (índice léxico), `gemini.ts` |
 | `lib/help/`, `components/help/`, `app/ayuda/` | Guías paso a paso, panel de ayuda, contacto y preguntas frecuentes |
 | `lib/contact.ts` | Canales de contacto (configurables por variables de entorno) |

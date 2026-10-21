@@ -77,3 +77,6 @@ export function normalize(s: string) {
     .replace(/\s+/g, " ")
     .trim();
 }
+
+// Municipios de la Sierra Norte presentes en los datos de la demo (piloto por comarca).
+export const SIERRA_NORTE = ["Braojos", "Buitrago del Lozoya", "Lozoyuela", "Rascafría", "Torrelaguna"];

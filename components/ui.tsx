@@ -203,7 +203,7 @@ export function Avatar({ name, className }: { name: string; className?: string }
     .map((w) => w[0]!.toUpperCase())
     .join("");
   return (
-    <span className={clsx("grid size-8 shrink-0 place-items-center rounded-full bg-sage-100 text-[11px] font-semibold text-sage-700", className)}>
+    <span aria-hidden className={clsx("grid size-8 shrink-0 place-items-center rounded-full bg-sage-100 text-[11px] font-semibold text-sage-700", className)}>
       {initials}
     </span>
   );

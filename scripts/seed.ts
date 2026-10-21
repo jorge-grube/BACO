@@ -5,6 +5,7 @@
 import { readFileSync, rmSync, existsSync } from "node:fs";
 import path from "node:path";
 import { openFresh } from "../lib/db/client";
+import { ensureDemoExtras } from "../lib/db/demo-extras";
 import { MUNICIPALITIES, findMunicipality, normalize } from "../lib/geo";
 import { CATEGORIES, LABELS, type LabelCode } from "../lib/domain";
 import { buildSearchText } from "../lib/match/text";
@@ -297,6 +298,9 @@ const wine = others.find((p) => p.category === "Vinos") ?? others[0];
 const oil = others.find((p) => p.category === "Aceite") ?? others[1];
 insRequest.run("lucia", wine.producer_id, wine.id, "muestra", "2 botellas", "Estamos montando una carta de vinos de Madrid por copas. ¿Nos enviáis muestra?", "respondida", "Os la dejamos el martes en la taberna.", "-4 days", "-3 days");
 insRequest.run("lucia", oil.producer_id, oil.id, "pedido", "20 l/mes", "Necesitamos AOVE para cocina, unos 20 litros al mes.", "enviada", null, "-1 day", "-1 day");
+
+// Partes añadidas después (puesto, agenda, avisos, altas asistidas…): ver lib/db/demo-extras.ts.
+ensureDemoExtras(db);
 
 const count = (sql: string) => (db.prepare(sql).get() as { n: number }).n;
 console.log(

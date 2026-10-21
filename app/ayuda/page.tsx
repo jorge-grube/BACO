@@ -3,8 +3,9 @@ import { RiArrowDownSLine, RiPlayCircleLine } from "@remixicon/react";
 import { ContactChannels, StartGuideButton } from "@/components/help/help-center";
 import { LabelBadge } from "@/components/ui";
 import { CONTACT } from "@/lib/contact";
+import { currentProfile } from "@/lib/session";
 import { buildGuides } from "@/lib/help/guides";
-import { demoProductId } from "@/lib/help/demo";
+import { demoTargets } from "@/lib/help/demo";
 
 export const metadata: Metadata = { title: "Ayuda" };
 
@@ -54,8 +55,9 @@ const FAQ: { q: string; a: React.ReactNode; id?: string }[] = [
     q: "Soy productor. ¿Cómo salgo en BACO?",
     a: (
       <p>
-        Si tu empresa está en el catálogo M Producto Certificado, ya tienes ficha: la hemos creado con tus productos. Pulsa «Soy productor»
-        arriba, o pide que te llamemos y te ayudamos a completarla por teléfono. No tienes que tener página web.
+        Si tu empresa está en el catálogo M Producto Certificado, ya tienes ficha: la hemos creado con tus productos. Pide que te llamemos
+        o ven a vernos a un mercado: el equipo te prepara la página y te la manda por WhatsApp para que la revises. No tienes que tener
+        página web ni rellenar nada.
       </p>
     ),
   },
@@ -63,8 +65,70 @@ const FAQ: { q: string; a: React.ReactNode; id?: string }[] = [
     q: "¿Qué pasa cuando pido una muestra?",
     a: (
       <p>
-        El mensaje le llega al productor a su panel de BACO. Si el productor todavía no usa BACO, el equipo de Aplus se lo hace llegar.
+        El mensaje le llega al productor a su panel de BACO. Si el productor todavía no usa BACO, el equipo de BACO le llama y se lo cuenta. Si ya lo usa, además le avisamos por WhatsApp.
         Cuando conteste, verás la respuesta en «Mi panel».
+      </p>
+    ),
+  },
+  {
+    id: "entrar",
+    q: "¿Cómo entro? No tengo contraseña",
+    a: (
+      <p>
+        No hace falta contraseña. En «Entrar» escribe tu móvil y te mandamos un código de 6 números por SMS. Lo escribes y ya estás dentro.
+        Si no te llega en un minuto, pulsa «Ayuda» y te llamamos.
+      </p>
+    ),
+  },
+  {
+    id: "puesto",
+    q: "¿Qué es el puesto compartido en los mercadillos?",
+    a: (
+      <>
+        <p>
+          BACO pone un puesto en mercados de productores de Madrid y vende ahí productos de varios productores a la vez. Así no necesitas tener
+          tu propio puesto ni ir tú ese día.
+        </p>
+        <p className="mt-2">
+          <strong>Si compras:</strong> puedes apartar producto gratis desde la web y pagarlo al recogerlo en el mercado.{" "}
+          <strong>Si produces:</strong> nos dejas el producto el día antes, lo vendemos por ti, te devolvemos lo que sobre y te pagamos en 7
+          días. Nos quedamos un 15 % de lo vendido (condiciones de ejemplo).
+        </p>
+        <p className="mt-2">
+          <a href="/puesto" className="font-semibold text-ink underline underline-offset-2">
+            Ver el puesto
+          </a>
+        </p>
+      </>
+    ),
+  },
+  {
+    id: "agenda",
+    q: "¿Qué hay en la agenda?",
+    a: (
+      <p>
+        Mercados de productores con fechas reales, ferias del sector y actividades de BACO: altas asistidas en los mercados, encuentros entre
+        productores y cocineros, rutas y talleres. Te puedes apuntar y añadirlo a tu calendario. Las actividades de BACO son de ejemplo.
+      </p>
+    ),
+  },
+  {
+    id: "distintivo",
+    q: "Tengo un restaurante. ¿Qué es el distintivo?",
+    a: (
+      <p>
+        Un cartel voluntario y gratuito, «Cocina con producto de Madrid», para restaurantes que compran a productores de BACO. Lo pides desde tu
+        panel y, cuando lo tienes, sales en la página de restaurantes y puedes imprimir un cartel con QR.
+      </p>
+    ),
+  },
+  {
+    id: "whatsapp",
+    q: "Me ha llegado un WhatsApp de BACO, ¿es de fiar?",
+    a: (
+      <p>
+        Te escribimos para avisarte de que alguien te ha escrito, de una reserva o para que revises tu página. El enlace siempre empieza por la
+        dirección de BACO y nunca te pedimos contraseñas ni datos del banco. Si dudas, llámanos.
       </p>
     ),
   },
@@ -97,7 +161,7 @@ const FAQ: { q: string; a: React.ReactNode; id?: string }[] = [
         </p>
         <dl className="mt-3 grid gap-x-4 gap-y-1 text-[15px] sm:grid-cols-[auto_1fr]">
           <dt className="font-semibold text-ink">Responsable</dt>
-          <dd>Pendiente de definir por Aplus (razón social y NIF).</dd>
+          <dd>BACO. Razón social y NIF de ejemplo en este prototipo.</dd>
           <dt className="font-semibold text-ink">Para qué</dt>
           <dd>Atender tu consulta o devolverte la llamada en la franja que elijas.</dd>
           <dt className="font-semibold text-ink">Base legal</dt>
@@ -107,14 +171,22 @@ const FAQ: { q: string; a: React.ReactNode; id?: string }[] = [
           <dt className="font-semibold text-ink">Tus derechos</dt>
           <dd>Acceder, corregir o borrar tus datos escribiendo al correo de ayuda.</dd>
         </dl>
-        <p className="mt-2 text-ink-3">Prototipo: estos datos se completarán antes de abrir BACO al público.</p>
+        <p className="mt-2">
+          Todo el detalle en{" "}
+          <a href="/privacidad" className="font-semibold text-ink underline underline-offset-2">
+            Privacidad
+          </a>
+          .
+        </p>
       </>
     ),
   },
 ];
 
-export default function HelpPage() {
-  const guides = buildGuides(demoProductId());
+export default async function HelpPage() {
+  const profile = await currentProfile();
+  const who = profile?.role ?? "visitante";
+  const guides = buildGuides(demoTargets()).filter((g) => g.roles.includes(who));
   const contact = {
     isDemo: CONTACT.isDemo,
     phoneDisplay: CONTACT.phoneDisplay,
@@ -134,7 +206,7 @@ export default function HelpPage() {
         Elige qué quieres hacer y te lo enseñamos en la pantalla. Si prefieres, habla con una persona.
       </p>
 
-      <section className="mt-10">
+      <section id="guias" className="mt-10 scroll-mt-24" data-help="help-guides">
         <h2 className="text-xl font-semibold tracking-[-0.02em]">Guías paso a paso</h2>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           {guides.map((g) => (
@@ -147,7 +219,7 @@ export default function HelpPage() {
               <span>
                 <span className="block text-[17px] font-semibold">{g.title}</span>
                 <span className="mt-1 block text-[15px] leading-snug text-ink-2">{g.summary}</span>
-                <span className="mt-2 block text-sm font-semibold text-sage-700">Empezar · {g.steps.length} pasos</span>
+                <span className="mt-2 block text-sm font-semibold text-sage-700">Empezar · {g.steps.length} {g.steps.length === 1 ? "paso" : "pasos"}</span>
               </span>
             </StartGuideButton>
           ))}
@@ -170,7 +242,7 @@ export default function HelpPage() {
           </div>
         </div>
         <aside className="lg:sticky lg:top-24 lg:self-start">
-          <div className="rounded-[20px] border border-line p-6">
+          <div className="rounded-[20px] border border-line p-6" data-help="help-contact">
             <h2 className="text-xl font-semibold tracking-[-0.02em]">Habla con una persona</h2>
             <p className="mt-1 text-[15px] text-ink-2">{contact.hours}.</p>
             <ContactChannels contact={contact} pathname="/ayuda" />

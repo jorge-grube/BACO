@@ -32,7 +32,7 @@ export default async function ProducerPage({ params }: Props) {
   return (
     <div className="mx-auto max-w-[1440px] px-5 md:px-8 xl:px-12 pt-6">
       <section className="grain grid overflow-hidden rounded-lg bg-sage-50 lg:grid-cols-[1.15fr_1fr]">
-        <div className="px-6 py-10 md:px-10">
+        <div className="px-6 py-10 md:px-10" data-help="producer-header">
           <p className="label">{categories.join(" · ")}</p>
           <h1 className="mt-3 max-w-3xl text-[30px] leading-[1.1] font-semibold tracking-[-0.035em] md:text-[40px]">{producer.name}</h1>
           <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-ink-2">
@@ -86,7 +86,7 @@ export default async function ProducerPage({ params }: Props) {
         )}
       </section>
 
-      <section className="mt-10">
+      <section className="mt-10" data-help="producer-products">
         <p className="mb-4 text-sm text-ink-2">
           <span className="font-semibold text-ink">{products.length}</span> {products.length === 1 ? "producto" : "productos"} en BACO
         </p>

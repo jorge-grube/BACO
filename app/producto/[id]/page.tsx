@@ -173,7 +173,7 @@ export default async function ProductPage({ params }: Props) {
               </p>
             ) : (
               <p className="mt-3 text-[13px] leading-snug text-ink-3">
-                Este productor aún no gestiona su página en BACO: tu mensaje le llega a través de Aplus.
+                Este productor aún no gestiona su página en BACO: el equipo de BACO le llama para hacerle llegar tu mensaje.
               </p>
             )}
             {producer.capacity_note && <p className="dash mt-3 pt-3 text-[13px] leading-snug text-ink-2">{producer.capacity_note}</p>}

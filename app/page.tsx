@@ -2,6 +2,7 @@ import Link from "next/link";
 import { RiArrowRightLine, RiArrowRightUpLine } from "@remixicon/react";
 import { ProductCard, ProductRow } from "@/components/product-card";
 import { CMLogo } from "@/components/cm-logo";
+import { AgendaRow } from "@/components/agenda-item";
 import { HubFigure } from "@/components/hub/figure";
 import { SearchBox } from "@/components/search-box";
 import { Shot } from "@/components/shot";
@@ -11,7 +12,9 @@ import {
   categoryCounts,
   currentOffers,
   labelCounts,
+  stallDays,
   trendingProducers,
+  upcomingAgenda,
   trendingProducts,
 } from "@/lib/db/repo";
 import { CATALOG_URL, LABEL_CODES } from "@/lib/domain";
@@ -19,6 +22,7 @@ import { MUNICIPALITIES, findMunicipality } from "@/lib/geo";
 import { parseIntentRules } from "@/lib/match/intent";
 import { search } from "@/lib/match/search";
 import { EXAMPLES } from "@/lib/examples";
+import { longDate } from "@/lib/format";
 import { EDITORIAL, categoryPhoto, distinctPhotos, photo } from "@/lib/photos";
 import { currentProfile } from "@/lib/session";
 
@@ -46,6 +50,8 @@ export default async function Home() {
   const trending = trendingProducts(5);
   const producers = trendingProducers(5);
   const offers = currentOffers(3);
+  const nextDay = stallDays("proximos")[0];
+  const agenda = upcomingAgenda({ limit: 3 });
 
   // Ejemplo vivo: la misma búsqueda que usamos en la demo, con datos reales.
   const example = EXAMPLES[0];
@@ -102,7 +108,7 @@ export default async function Home() {
           </div>
 
           {/* Fig 1 · Muelle BACO (skill anatomy), integrada en el verde */}
-          <div className="self-center px-4 pb-8 md:px-8 lg:py-8 lg:pr-8 lg:pl-0">
+          <div className="self-center px-4 pb-8 max-md:hidden md:px-8 lg:py-8 lg:pr-8 lg:pl-0">
             <HubFigure bare />
           </div>
         </div>
@@ -129,22 +135,24 @@ export default async function Home() {
         <ol className="grid grid-cols-[minmax(0,1fr)] gap-px overflow-hidden rounded-md border border-line bg-line sm:grid-cols-3">
           {exampleResult.matches.map((m, i) => (
             <li key={m.product.id} className="bg-white">
-              <Link href={`/producto/${m.product.id}`} className="group flex h-full flex-col gap-1 hover:bg-paper-2">
+              <Link href={`/producto/${m.product.id}`} className="group flex h-full gap-3 p-3 hover:bg-paper-2 sm:flex-col sm:gap-1 sm:p-0">
                 <Shot
                   photo={examplePhotos[i]}
-                  sizes="(min-width: 1024px) 22vw, (min-width: 640px) 33vw, 100vw"
-                  className="mb-3 aspect-[16/9] w-full"
+                  sizes="(min-width: 1024px) 22vw, (min-width: 640px) 33vw, 96px"
+                  className="size-24 shrink-0 rounded-[10px] sm:mb-3 sm:aspect-[16/9] sm:size-auto sm:w-full sm:rounded-none"
                   imgClassName="transition-transform duration-500 ease-out group-hover:scale-[1.04]"
                 >
-                  <span className="absolute top-3 left-3 grid size-7 place-items-center rounded-[6px] bg-white text-xs font-semibold text-ink tabular-nums shadow-card">
+                  <span className="absolute top-2 left-2 grid size-6 place-items-center rounded-[6px] bg-white text-xs font-semibold text-ink tabular-nums shadow-card sm:top-3 sm:left-3 sm:size-7">
                     {i + 1}
                   </span>
                 </Shot>
-                <span className="line-clamp-2 px-4 text-sm font-semibold group-hover:underline group-hover:underline-offset-2">{m.product.name}</span>
-                <span className="truncate px-4 text-xs text-ink-2">
-                  {m.product.producer_name} · {m.product.municipality}
+                <span className="flex min-w-0 flex-1 flex-col gap-1 sm:contents">
+                  <span className="line-clamp-2 text-sm font-semibold group-hover:underline group-hover:underline-offset-2 sm:px-4">{m.product.name}</span>
+                  <span className="truncate text-xs text-ink-2 sm:px-4">
+                    {m.product.producer_name} · {m.product.municipality}
+                  </span>
+                  <span className="mt-auto text-xs leading-snug text-ink-3 sm:px-4 sm:pt-3 sm:pb-4">{m.why.slice(0, 2).join(" · ")}</span>
                 </span>
-                <span className="mt-auto px-4 pt-3 pb-4 text-xs leading-snug text-ink-3">{m.why.slice(0, 2).join(" · ")}</span>
               </Link>
             </li>
           ))}
@@ -198,8 +206,43 @@ export default async function Home() {
             label="Huerta"
             title="Verdura de temporada, mucha de producción ecológica"
             meta={`${countOf("Verduras y frutas")} verduras y frutas`}
-            className="aspect-[4/3] sm:aspect-[16/9]"
+            className="aspect-[4/3] max-sm:hidden sm:aspect-[16/9]"
           />
+        </div>
+      </section>
+
+      {/* En persona: el puesto compartido y la agenda */}
+      <section className="mt-16">
+        <SectionHeader label="Fuera de la pantalla" title="Nos vemos en el mercado" />
+        <div className="grid gap-4 lg:grid-cols-2">
+          <Link href="/puesto" className="group grid overflow-hidden rounded-lg bg-sage-50 sm:grid-cols-[1fr_0.8fr]">
+            <div className="flex flex-col p-6 md:p-8">
+              <p className="label">Puesto compartido de BACO</p>
+              <h3 className="mt-2 text-2xl leading-tight font-semibold tracking-[-0.03em]">Productos de varios productores en un mismo puesto</h3>
+              <p className="mt-3 text-[15px] leading-relaxed text-ink-2">
+                {nextDay
+                  ? `Próximo: ${longDate(nextDay.date)}, ${nextDay.market}. ${nextDay.accepted} productos. Reserva gratis y paga allí.`
+                  : "Reserva gratis y paga en el mercado."}
+              </p>
+              <p className="mt-2 text-[15px] leading-relaxed text-ink-2">¿Produces? Vendemos tu producto por ti, sin montar tu propio puesto.</p>
+              <span className="mt-auto inline-flex items-center gap-1.5 pt-5 text-[15px] font-semibold">
+                Ver el puesto <RiArrowRightLine className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
+              </span>
+            </div>
+            <Shot photo={photo(EDITORIAL.mercado)} sizes="(min-width: 1024px) 20vw, (min-width: 640px) 40vw, 100vw" className="aspect-[16/9] sm:aspect-auto" />
+          </Link>
+          <div className="flex flex-col rounded-lg border border-line p-6 md:p-8">
+            <p className="label">Agenda</p>
+            <h3 className="mt-2 text-2xl leading-tight font-semibold tracking-[-0.03em]">Mercados, ferias y encuentros</h3>
+            <ul className="mt-4 space-y-2">
+              {agenda.map((a) => (
+                <AgendaRow key={a.id} a={a} />
+              ))}
+            </ul>
+            <ButtonLink href="/agenda" variant="secondary" size="sm" className="mt-5 self-start">
+              Ver toda la agenda <RiArrowRightLine className="size-4" />
+            </ButtonLink>
+          </div>
         </div>
       </section>
 
@@ -264,7 +307,7 @@ export default async function Home() {
               <Shot
                 photo={photo(LABEL_PHOTO[code])}
                 sizes="(min-width: 1024px) 20vw, (min-width: 640px) 50vw, 100vw"
-                className="aspect-[16/10] w-full"
+                className="aspect-[16/10] w-full max-sm:hidden"
                 imgClassName="transition-transform duration-500 ease-out group-hover:scale-[1.04]"
               >
                 <span className="absolute top-3 left-3 rounded-[5px] bg-white">
@@ -272,6 +315,9 @@ export default async function Home() {
                 </span>
               </Shot>
               <div className="flex flex-1 flex-col gap-3 p-5">
+                <span className="sm:hidden">
+                  <LabelBadge code={code} />
+                </span>
                 <p className="text-[13px] leading-snug text-ink-2">{LABEL_BLURB[code]}</p>
                 <p className="mt-auto flex items-center justify-between pt-2 text-sm font-semibold">
                   <span className="tabular-nums">
@@ -339,7 +385,7 @@ export default async function Home() {
             label="Productores"
             photoId={EDITORIAL.queseria}
             title="Te encuentran los restaurantes que ya te buscan"
-            points={["Tu página ya está creada con tus productos del catálogo", "Te damos de alta por teléfono si lo prefieres", "Ves cuántas veces sales en búsquedas"]}
+            points={["Tu página ya está creada con tus productos del catálogo", "Te damos de alta por teléfono o en el mercado", "Vende en nuestro puesto sin montar el tuyo"]}
             href={profile?.role === "productor" ? "/panel" : "/entrar?rol=productor"}
             cta={profile?.role === "productor" ? "Ir a mi panel" : "Gestiona tu página gratis"}
           />
@@ -347,7 +393,7 @@ export default async function Home() {
             label="Consumidores"
             photoId={EDITORIAL.pintxos}
             title="Lo mejor de Madrid, y dónde probarlo"
-            points={["Tendencias y ofertas de la semana", "Favoritos con aviso de cambios", "Reseñas de quien ya lo ha probado"]}
+            points={["Tendencias y ofertas de la semana", "Reserva en el puesto del mercado y paga allí", "Reseñas de quien ya lo ha probado"]}
             href="/buscar"
             cta="Explorar productos"
           />
@@ -358,8 +404,10 @@ export default async function Home() {
         <section className="mt-20">
           <SectionHeader title="Recién descubiertos" />
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {[...trending].reverse().slice(0, 4).map((p) => (
-              <ProductCard key={p.id} product={p} />
+            {[...trending].reverse().slice(0, 4).map((p, i) => (
+              <div key={p.id} className={i >= 2 ? "grid max-sm:hidden" : "grid"}>
+                <ProductCard product={p} />
+              </div>
             ))}
           </div>
         </section>

@@ -66,3 +66,16 @@ Corto (100-340 ms), con propósito y anulado por `prefers-reduced-motion`:
 - Composición editorial alineada a la izquierda, no todo centrado.
 - Datos reales del catálogo en cada pantalla; lo simulado lleva la marca "dato de ejemplo".
 - Iconos Remix en trazo fino, tamaño 16–18, nunca dentro de círculos de colores.
+
+## Partes añadidas (puesto, agenda, equipo)
+
+- **Móvil primero en listas largas.** En el móvil las tarjetas del puesto y el ejemplo de la portada pasan a fila
+  (foto de 96 px a la izquierda) para que quepan más en pantalla; en escritorio vuelven a ser tarjetas 4:3.
+- **Menú del móvil** con el botón «Menú» escrito (no solo un icono), las mismas secciones y en el mismo orden que
+  en escritorio, y las acciones de cuenta abajo. Se cierra con Escape y al cambiar de página.
+- **Fechas** siempre escritas enteras («Domingo, 1 de noviembre») además del calendario de la izquierda.
+- **Lo que organiza BACO** va en verde salvia oscuro (`sage-700`); lo que organizan otros, en gris. El puesto
+  compartido lleva su etiqueta en `clay` porque es un aviso, no decoración.
+- **Avisos al móvil** dibujados como burbuja de mensaje (`PhoneMessage`) para que se entienda qué recibe cada uno.
+- **Carteles con QR** en A4: al imprimir se ocultan cabecera, pie y botón de ayuda (`.no-print`, `@media print`).
+- **Tablas anchas** dentro de una región desplazable con teclado (`tabIndex=0` y nombre propio).

@@ -7,7 +7,7 @@ import { CATALOG_URL } from "@/lib/domain";
 import { HelpCenter } from "@/components/help/help-center";
 import { CONTACT } from "@/lib/contact";
 import { buildGuides } from "@/lib/help/guides";
-import { demoProductId } from "@/lib/help/demo";
+import { demoTargets } from "@/lib/help/demo";
 import { currentProfile } from "@/lib/session";
 
 const montserrat = Montserrat({
@@ -44,26 +44,39 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <main id="main" className="flex-1">
           {children}
         </main>
-        <footer className="mt-24 border-t border-line">
-          <div className="mx-auto flex max-w-[1440px] flex-col gap-5 px-5 md:px-8 xl:px-12 py-8 md:flex-row md:items-center md:justify-between">
-            <div className="flex items-center gap-4">
+        <footer className="no-print mt-24 border-t border-line pb-20">
+          <div className="mx-auto grid max-w-[1440px] gap-8 px-5 py-10 md:grid-cols-[1.4fr_1fr_1fr_1fr] md:px-8 xl:px-12">
+            <div>
               <a href={CATALOG_URL} target="_blank" rel="noreferrer" aria-label="Comunidad de Madrid: catálogo M Producto Certificado (abre en otra pestaña)">
                 <CMLogo className="h-9" />
               </a>
-              <p className="max-w-md text-xs leading-relaxed text-ink-3">
-                Datos del catálogo M Producto Certificado. Ubicación, capacidad, precios, reseñas y actividad son datos de ejemplo
-                del prototipo. Las fotos son ilustrativas (Unsplash): muestran el tipo de producto, no el producto concreto.
+              <p className="mt-3 max-w-sm text-[13px] leading-relaxed text-ink-3">
+                Productos y empresas del catálogo oficial M Producto Certificado. Ubicación, precios, reseñas, actividad, teléfonos y lo que organiza BACO son
+                datos de ejemplo del prototipo. Las fotos son ilustrativas (Unsplash).
               </p>
+              <p className="mt-3 text-[13px] text-ink-3">BACO · Reto Aplus Gastromarketing · 2026</p>
             </div>
-            <div className="flex shrink-0 flex-col items-start gap-1 text-xs text-ink-3 md:items-end">
-              <a href="/ayuda" className="text-sm font-semibold text-ink underline underline-offset-2">
-                Ayuda y contacto
-              </a>
-              <p>BACO · Reto Aplus Gastromarketing · 2026</p>
-            </div>
+            {[
+              ["Explora", [["/buscar", "Buscar"], ["/puesto", "Puesto en mercadillos"], ["/agenda", "Agenda en persona"], ["/restaurantes", "Restaurantes"], ["/piloto/sierra-norte", "Piloto Sierra Norte"]]],
+              ["Ayuda", [["/ayuda", "Ayuda y contacto"], ["/ayuda#guias", "Guías paso a paso"], ["/entrar", "Entrar con tu móvil"], ["/demo/avisos", "Avisos enviados (demo)"]]],
+              ["Legal", [["/aviso-legal", "Aviso legal"], ["/privacidad", "Privacidad"], ["/cookies", "Cookies"], ["/accesibilidad", "Accesibilidad"]]],
+            ].map(([title, links]) => (
+              <nav key={title as string} aria-label={title as string}>
+                <p className="text-sm font-semibold">{title as string}</p>
+                <ul className="mt-2">
+                  {(links as string[][]).map(([href, label]) => (
+                    <li key={href}>
+                      <a href={href} className="inline-flex min-h-11 items-center text-[15px] text-ink-2 underline-offset-2 hover:text-ink hover:underline">
+                        {label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            ))}
           </div>
         </footer>
-        <HelpCenter guides={buildGuides(demoProductId())} role={profile?.role ?? null} contact={contact} />
+        <HelpCenter guides={buildGuides(demoTargets())} role={profile?.role ?? null} contact={contact} />
       </body>
     </html>
   );

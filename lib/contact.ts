@@ -1,4 +1,4 @@
-// Canales de contacto de BACO. Los valores reales los pone Aplus en .env.local;
+// Canales de contacto de BACO. Los valores reales van en .env.local;
 // sin ellos se muestran valores de ejemplo marcados como "dato de ejemplo" (nunca un número real inventado).
 const env = (key: string) => (process.env[key] ?? "").trim();
 

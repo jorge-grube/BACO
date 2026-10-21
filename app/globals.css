@@ -166,6 +166,31 @@ body {
   .text-\[12\.5px\] { font-size: 14px; }
 }
 
+/* Impresión de carteles con QR: solo el cartel, a página completa */
+@media print {
+  .no-print,
+  .no-print * {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
+  main {
+    padding: 0;
+  }
+  .poster {
+    max-width: none;
+    width: 100%;
+    height: 100vh;
+    aspect-ratio: auto;
+    border: 0;
+  }
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     transition: none !important;

@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { RiArrowRightLine, RiInboxLine } from "@remixicon/react";
+import { RiArrowRightLine, RiInboxLine, RiPhoneLine, RiPrinterLine, RiWhatsappLine } from "@remixicon/react";
 import { updateRequest } from "@/app/actions";
 import { ProducerForm } from "@/components/forms";
 import { ProductCard, ProductRow } from "@/components/product-card";
+import { BadgeCard, NoticesCard, ReservationsCard, SignupsCard, StallProducerCard } from "@/components/panel-parts";
 import { Shot } from "@/components/shot";
-import { Avatar, ButtonLink, SectionHeader } from "@/components/ui";
+import { TeamPanel } from "./team";
+import { Avatar, ButtonLink, MockTag, SectionHeader } from "@/components/ui";
 import {
   favoritesOf,
   producerOwnedBy,
@@ -27,7 +29,9 @@ export default async function PanelPage() {
   const profile = await requireProfile();
   return (
     <div className="mx-auto max-w-[1440px] px-5 md:px-8 xl:px-12 pt-8">
-      {profile.role === "productor" ? (
+      {profile.role === "equipo" ? (
+        <TeamPanel profile={profile} />
+      ) : profile.role === "productor" ? (
         <ProducerPanel profile={profile} />
       ) : profile.role === "hostelero" ? (
         <BuyerPanel profile={profile} />
@@ -55,9 +59,14 @@ function ProducerPanel({ profile }: { profile: Profile }) {
         title={producer.name}
         subtitle={`${products.length} productos · ${producer.municipality}`}
         action={
-          <ButtonLink href={`/productor/${producer.id}`} variant="secondary" size="sm">
-            Ver mi ficha pública
-          </ButtonLink>
+          <div className="flex flex-wrap gap-2">
+            <ButtonLink href={`/productor/${producer.id}`} variant="secondary" size="sm">
+              Ver mi página pública
+            </ButtonLink>
+            <ButtonLink href={`/productor/${producer.id}/cartel`} variant="secondary" size="sm">
+              <RiPrinterLine className="size-4" aria-hidden /> Cartel con QR para mi puesto
+            </ButtonLink>
+          </div>
         }
       />
       <section className="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-md border border-line bg-line md:grid-cols-4">
@@ -81,7 +90,9 @@ function ProducerPanel({ profile }: { profile: Profile }) {
             </ul>
           )}
         </section>
-        <aside className="space-y-8">
+        <aside className="space-y-10">
+          <StallProducerCard producerId={producer.id} />
+          <NoticesCard profileId={profile.id} />
           <div>
             <SectionHeader label="Lo que ve la hostelería" title="Tu página en BACO" />
             <div className="rounded-md border border-line p-5" data-help="ficha">
@@ -96,8 +107,8 @@ function ProducerPanel({ profile }: { profile: Profile }) {
               ))}
             </div>
             {products.length > 8 && (
-              <Link href={`/productor/${producer.id}`} className="mt-2 inline-block text-[13px] font-semibold underline underline-offset-2">
-                Ver los {products.length}
+              <Link href={`/productor/${producer.id}`} className="mt-1 inline-flex min-h-11 items-center text-[15px] font-semibold underline underline-offset-2">
+                Ver los {products.length} productos
               </Link>
             )}
           </div>
@@ -133,6 +144,22 @@ function InboxItem({ r }: { r: RequestRow }) {
               <span className="font-semibold text-ink">Tu respuesta: </span>
               {r.reply}
             </p>
+          )}
+          {r.from_phone && (
+            <div className="mt-3 flex flex-wrap items-center gap-2" data-help="reply-phone">
+              <a
+                href={`https://wa.me/34${r.from_phone.replace(/\D/g, "")}?text=${encodeURIComponent(`Hola, soy ${r.producer_name}. Te escribo por tu petición en BACO.`)}`}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex h-11 items-center gap-1.5 rounded-full border border-line px-4 text-[15px] font-semibold hover:bg-paper-2"
+              >
+                <RiWhatsappLine className="size-5 text-sage-700" aria-hidden /> Contestar por WhatsApp
+              </a>
+              <a href={`tel:+34${r.from_phone.replace(/\D/g, "")}`} className="inline-flex h-11 items-center gap-1.5 rounded-full border border-line px-4 text-[15px] font-semibold hover:bg-paper-2">
+                <RiPhoneLine className="size-5 text-sage-700" aria-hidden /> Llamar
+              </a>
+              <MockTag>teléfono de ejemplo</MockTag>
+            </div>
           )}
           {open && (
             <form action={updateRequest} className="mt-4 space-y-2" data-help="reply">
@@ -291,7 +318,12 @@ function BuyerPanel({ profile }: { profile: Profile }) {
         )}
       </section>
 
+      <BadgeCard profileId={profile.id} />
       <Favorites products={favorites} />
+      <SignupsCard profileId={profile.id} />
+      <div className="mt-12 max-w-xl">
+        <NoticesCard profileId={profile.id} />
+      </div>
     </>
   );
 }
@@ -303,8 +335,10 @@ function ConsumerPanel({ profile }: { profile: Profile }) {
   const trending = trendingProducts(4);
   return (
     <>
-      <PanelHeader profile={profile} title={`Hola, ${profile.name.split(" ")[0]}`} subtitle="Tus productos de Madrid guardados" />
+      <PanelHeader profile={profile} title={`Hola, ${profile.name.split(" ")[0]}`} subtitle="Tus reservas, tus favoritos y tus planes" />
+      <ReservationsCard profileId={profile.id} />
       <Favorites products={favorites} />
+      <SignupsCard profileId={profile.id} />
       <section className="mt-12">
         <SectionHeader label="Esta semana" title="Lo que más se está buscando" />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -313,6 +347,9 @@ function ConsumerPanel({ profile }: { profile: Profile }) {
           ))}
         </div>
       </section>
+      <div className="mt-12 max-w-xl">
+        <NoticesCard profileId={profile.id} />
+      </div>
     </>
   );
 }
