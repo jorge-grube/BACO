@@ -234,6 +234,7 @@ export type RequestRow = {
   updated_at: string;
   product_id: number | null;
   product_name: string | null;
+  product_category: string | null;
   producer_id: number;
   producer_name: string;
   from_profile_id: string;
@@ -244,7 +245,7 @@ export type RequestRow = {
 };
 
 const REQUEST_SELECT = /* sql */ `
-  SELECT r.*, p.name AS product_name, pr.name AS producer_name,
+  SELECT r.*, p.name AS product_name, p.category AS product_category, pr.name AS producer_name,
          f.name AS from_name, f.business_name AS from_business, f.business_type AS from_business_type,
          f.municipality AS from_municipality
   FROM requests r

@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { RiArrowRightLine } from "@remixicon/react";
 import { signIn } from "@/app/actions";
+import { Shot } from "@/components/shot";
 import { Avatar } from "@/components/ui";
 import { demoProfiles, producerOwnedBy } from "@/lib/db/repo";
 import { ROLE_NAMES, type Role } from "@/lib/domain";
+import { EDITORIAL, photo } from "@/lib/photos";
 
 export const metadata: Metadata = { title: "Entrar" };
 
@@ -11,6 +13,11 @@ const ROLE_COPY: Record<Role, string> = {
   hostelero: "Busca con el asistente, pide muestras y sigue tus solicitudes.",
   productor: "Gestiona tu ficha, responde solicitudes y mira cuántas veces apareces.",
   consumidor: "Descubre producto de Madrid, guarda favoritos y deja reseñas.",
+};
+const ROLE_PHOTO: Record<Role, string> = {
+  hostelero: EDITORIAL.cocinaDetalle,
+  productor: EDITORIAL.queseria,
+  consumidor: EDITORIAL.pintxos,
 };
 const ORDER: Role[] = ["hostelero", "productor", "consumidor"];
 
@@ -36,12 +43,14 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
               <button
                 className={
                   highlighted
-                    ? "group flex w-full items-center gap-4 rounded-md border-2 border-ink bg-white p-5 text-left"
-                    : "group flex w-full items-center gap-4 rounded-md border border-line bg-white p-5 text-left shadow-card hover:border-line-2"
+                    ? "group flex w-full items-center gap-4 overflow-hidden rounded-md border-2 border-ink bg-white pr-5 text-left"
+                    : "group flex w-full items-center gap-4 overflow-hidden rounded-md border border-line bg-white pr-5 text-left shadow-card hover:border-line-2"
                 }
               >
-                <Avatar name={p.name} className="size-11 text-sm" />
-                <span className="min-w-0 flex-1">
+                <Shot photo={photo(ROLE_PHOTO[p.role])} sizes="128px" className="hidden w-28 self-stretch sm:block" />
+                <span className="w-1 sm:hidden" aria-hidden />
+                <Avatar name={p.name} className="my-5 size-11 text-sm" />
+                <span className="min-w-0 flex-1 py-5">
                   <span className="flex flex-wrap items-center gap-2">
                     <span className="font-semibold">{p.name}</span>
                     <span className="rounded-md bg-sage-50 px-1.5 py-0.5 text-[11px] font-semibold text-sage-700">{ROLE_NAMES[p.role]}</span>

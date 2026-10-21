@@ -30,7 +30,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               </a>
               <p className="max-w-md text-xs leading-relaxed text-ink-3">
                 Datos del catálogo M Producto Certificado. Ubicación, capacidad, precios, reseñas y actividad son datos de ejemplo
-                del prototipo.
+                del prototipo. Las fotos son ilustrativas (Unsplash): muestran el tipo de producto, no el producto concreto.
               </p>
             </div>
             <p className="shrink-0 text-xs text-ink-3">BACO · Reto Aplus Gastromarketing · 2026</p>

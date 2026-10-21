@@ -25,6 +25,8 @@ funciona igual con reglas en español y un índice léxico con sinónimos de coc
   marca y sellos DOP/IGP/DC/ecológico. Respeta el `Crawl-delay` de su robots.txt, así que tarda unos 12 minutos.
 - El catálogo no publica ubicación, contacto, precio ni capacidad. `npm run seed` los genera de forma
   reproducible y los marca con `is_mock = 1`. Las reseñas, la actividad y las solicitudes también son de ejemplo.
+- Tampoco publica fotos: cada producto lleva una foto ilustrativa de su tipo (Unsplash, ver
+  `public/photos/CREDITS.md`), asignada por reglas en `lib/photos.ts` y marcada como "Foto ilustrativa" en la ficha.
 
 ## Cómo está hecho
 
@@ -33,6 +35,8 @@ funciona igual con reglas en español y un índice léxico con sinónimos de coc
 | `app/` | Páginas (Next.js App Router): portada, `/buscar`, `/producto/[id]`, `/productor/[id]`, `/panel`, `/entrar` y las server actions |
 | `lib/db/` | SQLite (better-sqlite3): esquema y repositorio. Es la única capa que toca la base de datos |
 | `lib/match/` | El match: `intent.ts` (petición → intención), `search.ts` (filtros, score y explicación), `text.ts` (índice léxico), `gemini.ts` |
+| `lib/photos.ts` | Foto ilustrativa de cada producto (reglas nombre/categoría → `lib/photo-library.ts`) y fotos editoriales |
+| `components/shot.tsx` | Foto con `next/image`, color de fondo mientras carga y velo para escribir encima |
 | `scripts/` | `scrape-catalog.mjs`, `seed.ts`, `embed.ts` |
 | `DESIGN.md` | Sistema visual: blanco, Montserrat y acento salvia `#B8D2C3` |
 

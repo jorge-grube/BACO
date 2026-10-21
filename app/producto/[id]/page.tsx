@@ -5,11 +5,13 @@ import { RiArrowLeftSLine, RiExternalLinkLine, RiHeart3Fill, RiHeart3Line, RiMap
 import { toggleFavorite } from "@/app/actions";
 import { ProductCard } from "@/components/product-card";
 import { RequestForm, ReviewForm } from "@/components/forms";
-import { Avatar, ButtonLink, CategoryTile, LabelBadge, MockTag, Rating, SectionHeader, SponsoredTag } from "@/components/ui";
+import { IllustrativeTag, Shot } from "@/components/shot";
+import { Avatar, ButtonLink, LabelBadge, MockTag, Rating, SectionHeader, SponsoredTag } from "@/components/ui";
 import { getProducer, getProduct, isFavorite, logEvent, reviewsFor, similarProducts } from "@/lib/db/repo";
 import { LABELS, ROLE_NAMES, type RequestType } from "@/lib/domain";
 import { distanceKm } from "@/lib/geo";
 import { formatNumber } from "@/lib/match/search";
+import { productPhoto } from "@/lib/photos";
 import { currentProfile } from "@/lib/session";
 
 type Props = { params: Promise<{ id: string }> };
@@ -45,14 +47,26 @@ export default async function ProductPage({ params }: Props) {
 
       <div className="mt-4 grid gap-10 lg:grid-cols-[1fr_360px]">
         <div>
-          <div className="relative overflow-hidden rounded-lg">
-            <CategoryTile category={product.category} className="aspect-[3/1] w-full" iconClass="size-12" />
-            <p className="label absolute top-5 left-6">{product.category}</p>
-            <p className="absolute bottom-5 left-6 text-xs font-medium text-ink/55">
-              {product.brand ? `${product.brand} · ` : ""}M Producto Certificado
-            </p>
-            <p className="absolute right-6 bottom-5 text-xs font-medium text-ink/55">Sin foto en el catálogo oficial</p>
-          </div>
+          <Shot
+            photo={productPhoto(product)}
+            alt={`Foto ilustrativa de ${product.category.toLowerCase()}`}
+            sizes="(min-width: 1024px) 66vw, 100vw"
+            className="aspect-[4/3] rounded-lg sm:aspect-[2/1]"
+            scrim="bottom"
+            preload
+          >
+            <span title="El catálogo oficial no publica fotos: la imagen muestra el tipo de producto, no este producto concreto.">
+              <IllustrativeTag className="absolute top-4 right-4" />
+            </span>
+            <div className="absolute inset-x-5 bottom-4 flex items-end justify-between gap-4 text-white md:inset-x-6 md:bottom-5">
+              <div>
+                <p className="label !text-white/70">{product.category}</p>
+                <p className="mt-1 text-xs font-medium text-white/80">
+                  {product.brand ? `${product.brand} · ` : ""}M Producto Certificado
+                </p>
+              </div>
+            </div>
+          </Shot>
 
           <div className="mt-6 flex flex-wrap items-center gap-2">
             {product.labels.map((l) => (

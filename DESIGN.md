@@ -29,6 +29,17 @@ Montserrat 400/500/600/700. Titulares 600 con `letter-spacing: -0.03em`. Micro-e
 Radio 10 (inputs, chips cuadrados), 16 (tarjetas), 28 (contenedores grandes). Botones en píldora.
 Sombras casi invisibles: borde de 1 px + `0 1px 2px rgb(20 24 22 / 0.04)`.
 
+## Fotografía
+
+- El catálogo oficial no publica fotos. Cada producto lleva una foto **ilustrativa** del tipo de producto
+  (`lib/photos.ts`: reglas sobre nombre y categoría → grupo de fotos en `lib/photo-library.ts`), siempre la misma
+  para el mismo producto. La ficha lo indica con la etiqueta "Foto ilustrativa" y el pie de página lo explica.
+- Fotos cálidas, de producto o de origen (cava, viñedo, huerta, cocina); nada de fotos de stock con marcas visibles.
+- Tarjetas 4:3, portada de categoría 4:5, banda editorial a sangre. Texto sobre foto solo en blanco y con velo
+  inferior (`scrim="bottom"`). Al pasar el ratón la foto escala un 4 %, nada más.
+- Mientras carga, la caja se pinta con el color medio de la foto (`Shot`), no con gris.
+- Licencia Unsplash; origen de cada archivo en `public/photos/CREDITS.md`.
+
 ## Reglas anti-"hecho con IA"
 
 - Nada de degradados morados, brillos, `✨`, emojis ni glassmorphism.

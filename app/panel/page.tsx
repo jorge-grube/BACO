@@ -4,6 +4,7 @@ import { RiArrowRightLine, RiInboxLine } from "@remixicon/react";
 import { updateRequest } from "@/app/actions";
 import { ProducerForm } from "@/components/forms";
 import { ProductCard, ProductRow } from "@/components/product-card";
+import { Shot } from "@/components/shot";
 import { Avatar, ButtonLink, SectionHeader } from "@/components/ui";
 import {
   favoritesOf,
@@ -17,6 +18,7 @@ import {
   type RequestRow,
 } from "@/lib/db/repo";
 import { REQUEST_STATUS, REQUEST_TYPES, type RequestStatus } from "@/lib/domain";
+import { productPhoto } from "@/lib/photos";
 import { requireProfile } from "@/lib/session";
 
 export const metadata: Metadata = { title: "Mi panel" };
@@ -206,14 +208,25 @@ function BuyerPanel({ profile }: { profile: Profile }) {
                 {requests.map((r) => (
                   <tr key={r.id} className="align-top">
                     <td className="px-4 py-3">
-                      {r.product_id ? (
-                        <Link href={`/producto/${r.product_id}`} className="font-semibold hover:underline hover:underline-offset-2">
-                          {r.product_name}
-                        </Link>
-                      ) : (
-                        <span className="font-semibold">—</span>
-                      )}
-                      <p className="text-xs text-ink-3">{r.producer_name}</p>
+                      <div className="flex items-start gap-3">
+                        {r.product_id && r.product_name && r.product_category && (
+                          <Shot
+                            photo={productPhoto({ id: r.product_id, name: r.product_name, category: r.product_category })}
+                            sizes="48px"
+                            className="size-10 shrink-0 rounded-[6px]"
+                          />
+                        )}
+                        <div className="min-w-0">
+                          {r.product_id ? (
+                            <Link href={`/producto/${r.product_id}`} className="font-semibold hover:underline hover:underline-offset-2">
+                              {r.product_name}
+                            </Link>
+                          ) : (
+                            <span className="font-semibold">—</span>
+                          )}
+                          <p className="text-xs text-ink-3">{r.producer_name}</p>
+                        </div>
+                      </div>
                     </td>
                     <td className="px-4 py-3 text-ink-2">
                       {REQUEST_TYPES[r.type]}
