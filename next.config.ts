@@ -3,6 +3,9 @@ import type { NextConfig } from "next";
 // Prototipo con SQLite síncrono (better-sqlite3): todas las páginas se renderizan
 // por petición, así que no usamos Cache Components de momento.
 const nextConfig: NextConfig = {
+  outputFileTracingIncludes: {
+    "/*": ["./data/baco.db"],
+  },
   turbopack: {
     rules: {
       "*.css": {
